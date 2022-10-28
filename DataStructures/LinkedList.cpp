@@ -1,116 +1,158 @@
 #include<iostream>
 using namespace std;
 
-struct Node {
+class Node {
+    public:
     int data;
     Node* next;
-    Node(int d) {
-        data = d;
+    Node() {
+        data = 0;
         next = NULL;
+    }
+    Node(int d) {
+        this->data = d;
+        this->next = NULL;
+    }
+    Node(int d, Node* next) {
+        this->data = d;
+        this->next = next;
     }
 };
 
-
-Node* insertNode(int data, Node* hnode) {
-    if(hnode == NULL) {
-        Node* node = new Node(data);
-        return node;
+class LinkedList {
+    Node* headNode;
+    public:
+    LinkedList() {
+        this->headNode = NULL;
     }
-    Node* head = hnode;
-    while(head->next != NULL) head = head->next;
+
+    /*
+    * Insert a new NODE at the end of the Linked List
+    * @param data to be inserted in LinkedList
+    */
+    void insertNode(int data);
+
+    /*
+    * Insert a new  NODE at given index
+    * @param data to be inserted in LinkedList
+    * @param index where data will be inserted
+    */
+    void insertNodeAt(int data, int index);
+
+    /*
+    * Delete the last NODE of Linked List
+    */
+    void deleteNode();
+
+    /*
+    * Delete NODE at given index 
+    * @param index where data will be deleted
+    */
+    void deleteNodeAt(int index);
+
+    /*
+    * Traverse and Prints the Linked List
+    */
+    void printList();
+};
+
+void LinkedList::insertNode(int data) {
+    if(headNode == NULL) {
+        Node* node = new Node(data);
+        headNode = node;
+        return;
+    }
+    Node* ptr = headNode;
+    while(ptr->next != NULL) ptr = ptr->next;
     Node* node = new Node(data);
-    head->next = node;
-    return hnode;
+    ptr->next = node;
 }
 
-
-Node* insertNodeAt(int data, int index, Node* hnode) {
-    if(hnode == NULL) {
-        cout<<"List is Empty inserted at : 0"<<endl;
-        return insertNode(data,hnode);
+void LinkedList::insertNodeAt(int data, int index) {
+    if(headNode == NULL) {
+        cout<<"List is Empty Inserted at 0th Index"<<endl;
+        insertNode(data);
+        return;
     } 
     if(index == 0) {
         Node* node = new Node(data);
-        node->next = hnode;
-        cout<<"inserted at : "<<index<<endl;
-        return node;
+        node->next = headNode;
+        cout<<"Inserted at : "<<index<<endl;
+        headNode = node;
+        return;
     }
     int count = 1;
-    Node* slow = hnode;
-    Node* fast = hnode->next;
+    Node* slow = headNode;
+    Node* fast = headNode->next;
     while(count != index && slow != NULL && fast != NULL) {
         slow = slow->next;
         fast = fast->next;
         count++;
     }
     if(count != index) {
-        cout<<"index out of Bounds."<<endl;
-        return hnode;
+        cout<<"Index out of Bounds."<<endl;
+        return;
     }
     Node* node = new Node(data);
     slow->next = node;
     node->next = fast;
-    cout<<"inserted at : "<<index<<endl;
-    return hnode;
+    cout<<"Inserted at : "<<index<<endl;
 }
 
-Node* deleteNode(Node* hnode) {
-    if(hnode == NULL) {
+void LinkedList::deleteNode() {
+    if(headNode == NULL) {
         cout<<"List is Empty."<<endl;
-        return hnode;
+        return;
     }
-    if(hnode->next == NULL) {
-        cout<<"deleted the last Node"<<endl;
-        return NULL;
+    if(headNode->next == NULL) {
+        cout<<"Deleted the last Node"<<endl;
+        headNode = NULL;
+        return;
     }
-    Node* head = hnode;
+    Node* head = headNode;
     while(head->next->next != NULL) head = head->next;
     delete head->next;
     head->next = NULL;
-    cout<<"deleted the last Node"<<endl;
-    return hnode;
+    cout<<"Deleted the last Node"<<endl;
 }
-
-
-Node* deleteNodeAt(int index,Node* hnode) {
-    if(hnode == NULL) {
+ 
+void LinkedList::deleteNodeAt(int index) {
+    if(headNode == NULL) {
         cout<<"List is Empty."<<endl;
-        return hnode;
+        return;
     }
     if(index == 0) {
-        Node* head = hnode;
-        hnode = hnode->next;
+        Node* head = headNode;
+        headNode = headNode->next;
         delete head;
-        cout<<"deleted Node at index : 0"<<endl;
-        return hnode;
+        cout<<"Deleted Node at index : 0"<<endl;
+        return;
     }
     int count = 1;
-    Node* slow = hnode;
-    Node* fast = hnode->next;
+    Node* slow = headNode;
+    Node* fast = headNode->next;
     while(count != index && slow != NULL && fast->next != NULL) {
         slow = slow->next;
         fast = fast->next;
         count++;
     }
     if(count != index) {
-        cout<<"index out of Bounds."<<endl;
-        return hnode;
+        cout<<"Index out of Bounds."<<endl;
+        return;
     }
     Node* n = fast;
     fast = fast->next;
     slow->next = fast;
     delete n;
-    cout<<"deleted Node at index : "<<index<<endl;
-    return hnode;
+    cout<<"Deleted Node at index : "<<index<<endl;
 }
 
-
-void printList(Node* hnode){
-    if(hnode == NULL){
+void LinkedList::printList(){
+    if(headNode == NULL){
         cout<<"List : Empty."<<endl;
         return;
     }
-    Node* head = hnode;
+    Node* head = headNode;
     cout<<"List : ";
     while(head->next != NULL) {
         cout<<head->data<<" --> ";
@@ -121,17 +163,55 @@ void printList(Node* hnode){
 
 
 int main() {
-    int arr[] = {42,5,31,-31,78,0,1,33};
-    Node* hnode = NULL;
-    for(int num : arr) {
-        hnode = insertNode(num,hnode);
+    bool exit = false;
+    int choice,data,index;
+    LinkedList List;
+
+    while(!exit) {
+        cout<<"\n\nLinked List Operations Menu \n"; 
+        cout<<"Press 1 to Insert at End \n";
+        cout<<"Press 2 to Insert at Index \n";
+        cout<<"Press 3 to Delete from End \n"; 
+        cout<<"Press 4 to Delete at Index \n";
+        cout<<"Press 5 to Print LinkedList \n";
+        cout<<"Press 6 to Exit \n\n";
+        cin>>choice;
+        switch (choice)
+        {
+        case 1:
+            cout<<"\nEnter Data to insert : ";
+            cin>>data;
+            List.insertNode(data);
+            List.printList();
+            break;
+        case 2:
+            cout<<"\nEnter Data to insert : ";
+            cin>>data;
+            cout<<"\nEnter Index : ";
+            cin>>index;
+            List.insertNodeAt(data,index);
+            List.printList();
+            break;
+        case 3:
+            List.deleteNode();
+            List.printList();
+            break;
+        case 4:
+            cout<<"\nEnter Index : ";
+            cin>>index;
+            List.deleteNodeAt(index);
+            List.printList();
+            break;
+        case 5:
+            List.printList();
+            break;
+        case 6:
+            exit = true;
+            break;
+        default:
+            cout<<"\nInvalid Choice.";
+            break;
+        }
     }
-    // hnode = insert(31,hnode);
-    // printList(hnode);
-    // hnode = insertNodeAt(22,8,hnode);
-    // hnode = deleteNode(hnode);
-    printList(hnode);
-    hnode = deleteNodeAt(7,hnode);
-    printList(hnode);
     return 0;
 }
